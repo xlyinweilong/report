@@ -1,5 +1,6 @@
 package com.yin.report.etl.dw.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"goodsCode"})
 public class DimGoods {
 
     private Long goodsSk;
@@ -84,5 +86,10 @@ public class DimGoods {
      * 供应商名称
      */
     private String supplyName;
+
+    /**
+     * 上市时间
+     */
+    private String marketTime;
 
 }

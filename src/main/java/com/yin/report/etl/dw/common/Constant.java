@@ -11,5 +11,5 @@ public class Constant {
     /**
      * 分隔符
      */
-    public final static String SEPARATE = "";
+    public final static String SEPARATE = ",";
 }

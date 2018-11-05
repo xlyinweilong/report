@@ -1,5 +1,6 @@
 package com.yin.report.etl.dw.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"channelCode"})
 public class DimChannel {
 
     private Long channelSk;
@@ -29,4 +31,11 @@ public class DimChannel {
      * 渠道城市
      */
     private String channelCity;
+
+    /**
+     * 渠道地址
+     */
+    private String channelAddress;
+
+
 }

@@ -2,16 +2,18 @@ package com.yin.report.etl.dw.dao;
 
 import com.yin.report.etl.dw.common.DaoInterface;
 import com.yin.report.etl.dw.entity.DimChannel;
+import com.yin.report.etl.dw.mapper.DimChannelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,14 +35,7 @@ public class DimChannelDao implements DaoInterface {
      * @return
      */
     public List<DimChannel> findAll() {
-        return dynamicJdbcTemplate.query("SELECT channel_sk,channel_code,channel_name,channel_city FROM dim_channel", (resultSet, i) -> {
-            DimChannel dim = new DimChannel();
-            dim.setChannelSk(resultSet.getLong("channel_sk"));
-            dim.setChannelCity(resultSet.getString("channel_code"));
-            dim.setChannelCode(resultSet.getString("channel_name"));
-            dim.setChannelName(resultSet.getString("channel_city"));
-            return dim;
-        });
+        return dynamicJdbcTemplate.query("SELECT channel_sk,channel_code,channel_name,channel_city,channel_address FROM dim_channel", new DimChannelMapper());
     }
 
     @Override
@@ -61,5 +56,21 @@ public class DimChannelDao implements DaoInterface {
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
+    }
+
+    /**
+     * 批量更新
+     *
+     * @param list
+     */
+    public void updateBatch(List<DimChannel> list) {
+        List<Object[]> batch = new ArrayList<>();
+        list.forEach(dim -> {
+            Object[] values = new Object[]{
+                    dim.getChannelCode(), dim.getChannelCity(), dim.getChannelAddress(), dim.getChannelSk()
+            };
+            batch.add(values);
+        });
+        dynamicJdbcTemplate.batchUpdate("UPDATE dim_channel SET channel_name = ? ,channel_city = ? ,channel_address=  ? WHERE channel_sk =  ?", batch);
     }
 }

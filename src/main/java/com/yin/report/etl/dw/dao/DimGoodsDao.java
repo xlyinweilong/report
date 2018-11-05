@@ -1,8 +1,6 @@
 package com.yin.report.etl.dw.dao;
 
 import com.yin.report.etl.dw.common.DaoInterface;
-import com.yin.report.etl.dw.entity.DimChannel;
-import com.yin.report.etl.dw.entity.DimClerk;
 import com.yin.report.etl.dw.entity.DimGoods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,4 +61,23 @@ public class DimGoodsDao implements DaoInterface {
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
+
+    /**
+     * 批量更新
+     *
+     * @param list
+     */
+    public void updateBatch(List<DimGoods> list) {
+        List<Object[]> batch = new ArrayList<>();
+        list.forEach(dim -> {
+            Object[] values = new Object[]{
+                    dim.getGoodsName(), dim.getGoodsImageUrl(), dim.getSizeClass(), dim.getGoodsBrand(),dim.getGoodsCategory(),dim.getGoodsCategory2(),
+                    dim.getGoodsSeries(),dim.getGoodsStyle(),dim.getGoodsPattern(),dim.getGoodsYear(),dim.getGoodsSeason(),dim.getSupplyCode(),dim.getSupplyName(),dim.getMarketTime(),dim.getGoodsSk()
+            };
+            batch.add(values);
+        });
+        dynamicJdbcTemplate.batchUpdate("UPDATE dim_goods SET goods_name = ? ,goods_image_url = ? ,size_class=  ?,goods_brand=?,goods_category=?,goods_category_2=?,goods_series=?,goods_style=?,goods_pattern=?,goods_year=?,goods_season=?,supply_code=?,supply_name=?,market_time=?  WHERE goods_sk =  ?", batch);
+    }
+
+
 }
