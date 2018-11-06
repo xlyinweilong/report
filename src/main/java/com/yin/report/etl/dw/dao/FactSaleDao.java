@@ -29,7 +29,7 @@ public class FactSaleDao {
 
 
     public List<String> findAllBillCode() {
-        return dynamicJdbcTemplate.queryForList("SELECT DISTINCT(bill_code) FROM fact_sale ORDER BY sale_sk DESC limit 10000", String.class);
+        return dynamicJdbcTemplate.queryForList("SELECT DISTINCT(bill_code_fact) FROM fact_sale ORDER BY sale_sk DESC limit 10000", String.class);
     }
 
 
@@ -49,7 +49,7 @@ public class FactSaleDao {
             };
             batch.add(values);
         });
-        dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_sale(goods_sk,color_sk,size_sk,channel_sk,date_sk,clerk_sk,vip_sk,sale_quantity_fact,cost_amount_fact,sale_tag_price_fact,sale_price_fact,bill_code,bill_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", batch);
+        dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_sale(goods_sk,color_sk,size_sk,channel_sk,date_sk,clerk_sk,vip_sk,sale_quantity_fact,cost_amount_fact,sale_tag_price_fact,sale_price_fact,bill_code_fact,bill_date_fact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", batch);
     }
 
 

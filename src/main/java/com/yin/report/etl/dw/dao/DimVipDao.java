@@ -1,8 +1,6 @@
 package com.yin.report.etl.dw.dao;
 
 import com.yin.report.etl.dw.common.DaoInterface;
-import com.yin.report.etl.dw.entity.DimColor;
-import com.yin.report.etl.dw.entity.DimSize;
 import com.yin.report.etl.dw.entity.DimVip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +34,7 @@ public class DimVipDao implements DaoInterface {
      * @return
      */
     public List<DimVip> findAll() {
-        return dynamicJdbcTemplate.query("SELECT vip_sk,vip_code FROM dim_vip",(resultSet, i) -> {
+        return dynamicJdbcTemplate.query("SELECT vip_sk,vip_code FROM dim_vip", (resultSet, i) -> {
             DimVip dim = new DimVip();
             dim.setVipSk(resultSet.getLong("vip_sk"));
             dim.setVipCode(resultSet.getString("vip_code"));
@@ -61,5 +60,21 @@ public class DimVipDao implements DaoInterface {
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
+    }
+
+    /**
+     * 批量更新
+     *
+     * @param list
+     */
+    public void updateBatch(List<DimVip> list) {
+        List<Object[]> batch = new ArrayList<>();
+        list.forEach(dim -> {
+            Object[] values = new Object[]{
+                    dim.getVipCode(), dim.getVipName(), dim.getVipGrade(), dim.getVipStartDate(), dim.getVipTel(), dim.getVipDiscount(), dim.getVipSex(), dim.getVipSk()
+            };
+            batch.add(values);
+        });
+        dynamicJdbcTemplate.batchUpdate("UPDATE dim_color SET vip_code = ? ,vip_name = ?,vip_grade=?,vip_start_date=?,vip_tel=?,vip_discount=?,vip_sex=? WHERE vip_sk =  ?", batch);
     }
 }

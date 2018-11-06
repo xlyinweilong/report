@@ -1,9 +1,6 @@
 package com.yin.report.etl.dw.dao;
 
-import com.yin.report.etl.dw.common.Constant;
 import com.yin.report.etl.dw.common.DaoInterface;
-import com.yin.report.etl.dw.entity.DimClerk;
-import com.yin.report.etl.dw.entity.DimColor;
 import com.yin.report.etl.dw.entity.DimSize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,5 +70,22 @@ public class DimSizeDao implements DaoInterface {
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
+    }
+
+
+    /**
+     * 批量更新
+     *
+     * @param list
+     */
+    public void updateBatch(List<DimSize> list) {
+        List<Object[]> batch = new ArrayList<>();
+        list.forEach(dim -> {
+            Object[] values = new Object[]{
+                    dim.getSizeCode(), dim.getSizeName(), dim.getSizeClass(),dim.getSizeSk()
+            };
+            batch.add(values);
+        });
+        dynamicJdbcTemplate.batchUpdate("UPDATE dim_size SET size_code = ? ,size_name = ?,size_class=? WHERE size_sk =  ?", batch);
     }
 }

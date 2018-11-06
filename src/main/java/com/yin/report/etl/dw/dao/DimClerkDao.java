@@ -2,7 +2,6 @@ package com.yin.report.etl.dw.dao;
 
 import com.yin.report.etl.dw.common.DaoInterface;
 import com.yin.report.etl.dw.entity.DimClerk;
-import com.yin.report.etl.dw.entity.DimColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,5 +60,21 @@ public class DimClerkDao implements DaoInterface {
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
+    }
+
+    /**
+     * 批量更新
+     *
+     * @param list
+     */
+    public void updateBatch(List<DimClerk> list) {
+        List<Object[]> batch = new ArrayList<>();
+        list.forEach(dim -> {
+            Object[] values = new Object[]{
+                    dim.getClerkCode(), dim.getClerkName(), dim.getClerkSex(),dim.getClerkBirthDate(),dim.getChannelCode(), dim.getClerkSk()
+            };
+            batch.add(values);
+        });
+        dynamicJdbcTemplate.batchUpdate("UPDATE dim_clerk SET clerk_code = ? ,clerk_name = ? ,clerk_sex=  ? ,clerk_birth_date=  ? ,channel_code=  ? WHERE clerk_sk =  ?", batch);
     }
 }

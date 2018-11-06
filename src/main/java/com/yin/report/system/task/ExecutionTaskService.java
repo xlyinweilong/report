@@ -2,6 +2,7 @@ package com.yin.report.system.task;
 
 import com.yin.report.etl.source.lijing.service.ChannelService;
 import com.yin.report.etl.source.lijing.service.CheckService;
+import com.yin.report.etl.source.lijing.service.ClerkService;
 import com.yin.report.etl.source.lijing.service.GoodsService;
 import com.yin.report.system.task.dao.TaskDao;
 import com.yin.report.system.task.dao.TaskLogDao;
@@ -36,6 +37,8 @@ public class ExecutionTaskService {
     private ChannelService channelService;
     @Autowired
     private CheckService checkService;
+    @Autowired
+    private ClerkService clerkService;
 
     private static final Logger log = LoggerFactory.getLogger(ExecutionTaskService.class);
 
@@ -56,6 +59,9 @@ public class ExecutionTaskService {
             goodsService.etlGoods(task.getTaskErpDb(), task.getTaskDwDb());
             //更新
             channelService.etlChannel(task.getTaskErpDb(), task.getTaskDwDb());
+            //更新员工
+            clerkService.etlClerk(task.getTaskErpDb(), task.getTaskDwDb());
+
             //执行完成后更新
             task.setTaskFinishDate(LocalDate.now());
             task.setTaskLastSuccessDate(now);
