@@ -1,9 +1,6 @@
 package com.yin.report.system.task;
 
-import com.yin.report.etl.source.lijing.service.ChannelService;
-import com.yin.report.etl.source.lijing.service.CheckService;
-import com.yin.report.etl.source.lijing.service.ClerkService;
-import com.yin.report.etl.source.lijing.service.GoodsService;
+import com.yin.report.etl.source.lijing.service.*;
 import com.yin.report.system.task.dao.TaskDao;
 import com.yin.report.system.task.dao.TaskLogDao;
 import com.yin.report.system.task.entity.Task;
@@ -39,6 +36,12 @@ public class ExecutionTaskService {
     private CheckService checkService;
     @Autowired
     private ClerkService clerkService;
+    @Autowired
+    private ColorService colorService;
+    @Autowired
+    private SizeService sizeService;
+    @Autowired
+    private VipService vipService;
 
     private static final Logger log = LoggerFactory.getLogger(ExecutionTaskService.class);
 
@@ -61,6 +64,12 @@ public class ExecutionTaskService {
             channelService.etlChannel(task.getTaskErpDb(), task.getTaskDwDb());
             //更新员工
             clerkService.etlClerk(task.getTaskErpDb(), task.getTaskDwDb());
+            //更新颜色
+            colorService.etlColor(task.getTaskErpDb(), task.getTaskDwDb());
+            //更新尺码
+            sizeService.etlSize(task.getTaskErpDb(), task.getTaskDwDb());
+            //更新VIP
+            vipService.etlVip(task.getTaskErpDb(), task.getTaskDwDb());
 
             //执行完成后更新
             task.setTaskFinishDate(LocalDate.now());

@@ -1,9 +1,9 @@
 package com.yin.report.etl.source.lijing.service;
 
 import com.yin.report.common.datasource.config.DBIdentifier;
-import com.yin.report.etl.dw.dao.DimChannelDao;
-import com.yin.report.etl.dw.entity.DimChannel;
-import com.yin.report.etl.source.lijing.dao.ChannelDao;
+import com.yin.report.etl.dw.dao.DimColorDao;
+import com.yin.report.etl.dw.entity.DimColor;
+import com.yin.report.etl.source.lijing.dao.ColorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,28 +22,27 @@ public class ColorService {
 
 
     @Autowired
-    private ChannelDao channelDao;
+    private ColorDao colorDao;
     @Autowired
-    private DimChannelDao dimChannelDao;
+    private DimColorDao dimColorDao;
 
     /**
      * 抽取销售并保存维度和事实
      */
-    public void etlChannel(String erpKey, String dwKey) throws IOException, Exception {
+    public void etlColor(String erpKey, String dwKey) throws IOException, Exception {
         DBIdentifier.setProjectCode(erpKey);
-        List<DimChannel> erpChannelList = channelDao.findAll();
+        List<DimColor> erpList = colorDao.findAll();
         DBIdentifier.setProjectCode(dwKey);
-        List<DimChannel> dwChannelList = dimChannelDao.findAll();
-        for (DimChannel dimChannel : dwChannelList) {
-            int index = erpChannelList.indexOf(dimChannel);
+        List<DimColor> dwList = dimColorDao.findAll();
+        for (DimColor dim : dwList) {
+            int index = erpList.indexOf(dim);
             if (index > -1) {
-                DimChannel erpChannel = erpChannelList.get(index);
-                dimChannel.setChannelAddress(erpChannel.getChannelAddress());
-                dimChannel.setChannelName(erpChannel.getChannelName());
-                dimChannel.setChannelCity(erpChannel.getChannelCity());
+                DimColor erp = erpList.get(index);
+                dim.setColorCode(erp.getColorCode());
+                dim.setColorName(erp.getColorName());
             }
         }
-        dimChannelDao.updateBatch(dwChannelList);
+        dimColorDao.updateBatch(dwList);
     }
 
 }

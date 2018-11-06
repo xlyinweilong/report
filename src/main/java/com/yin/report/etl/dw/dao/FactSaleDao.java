@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 尺码DAO
+ * 销售DAO
  *
  * @author yin.weilong
  * @date 2018.11.02
@@ -34,7 +34,7 @@ public class FactSaleDao {
 
 
     /**
-     * 插入货品
+     * 插入销售
      *
      * @return
      */

@@ -1,9 +1,9 @@
 package com.yin.report.etl.source.lijing.service;
 
 import com.yin.report.common.datasource.config.DBIdentifier;
-import com.yin.report.etl.dw.dao.DimChannelDao;
-import com.yin.report.etl.dw.entity.DimChannel;
-import com.yin.report.etl.source.lijing.dao.ChannelDao;
+import com.yin.report.etl.dw.dao.DimVipDao;
+import com.yin.report.etl.dw.entity.DimVip;
+import com.yin.report.etl.source.lijing.dao.VipDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,30 +20,33 @@ import java.util.List;
 public class VipService {
 
 
-
     @Autowired
-    private ChannelDao channelDao;
+    private VipDao vipDao;
     @Autowired
-    private DimChannelDao dimChannelDao;
+    private DimVipDao dimVipDao;
 
     /**
      * 抽取销售并保存维度和事实
      */
-    public void etlChannel(String erpKey, String dwKey) throws IOException, Exception {
+    public void etlVip(String erpKey, String dwKey) throws IOException, Exception {
         DBIdentifier.setProjectCode(erpKey);
-        List<DimChannel> erpChannelList = channelDao.findAll();
+        List<DimVip> erpList = vipDao.findAll();
         DBIdentifier.setProjectCode(dwKey);
-        List<DimChannel> dwChannelList = dimChannelDao.findAll();
-        for (DimChannel dimChannel : dwChannelList) {
-            int index = erpChannelList.indexOf(dimChannel);
+        List<DimVip> dwList = dimVipDao.findAll();
+        for (DimVip dim : dwList) {
+            int index = erpList.indexOf(dim);
             if (index > -1) {
-                DimChannel erpChannel = erpChannelList.get(index);
-                dimChannel.setChannelAddress(erpChannel.getChannelAddress());
-                dimChannel.setChannelName(erpChannel.getChannelName());
-                dimChannel.setChannelCity(erpChannel.getChannelCity());
+                DimVip erp = erpList.get(index);
+                dim.setVipGrade(erp.getVipGrade());
+                dim.setVipDiscount(erp.getVipDiscount());
+                dim.setVipSex(erp.getVipSex());
+                dim.setVipTel(erp.getVipTel());
+                dim.setVipStartDate(erp.getVipStartDate());
+                dim.setVipName(erp.getVipName());
+                dim.setVipCode(erp.getVipCode());
             }
         }
-        dimChannelDao.updateBatch(dwChannelList);
+        dimVipDao.updateBatch(dwList);
     }
 
 }
