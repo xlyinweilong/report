@@ -1,6 +1,9 @@
 package com.yin.report.etl.common;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 处理object转化
@@ -9,6 +12,17 @@ import java.math.BigDecimal;
  * @date 2018.11.04
  */
 public class ObjectUtils {
+
+    /**
+     * 去掉时分秒
+     *
+     * @return
+     */
+    public static Date getDateNoHMS(Date date) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String s = sdf.format(date);
+        return sdf.parse(s);
+    }
 
     public static BigDecimal getBigDecimal(Object o) {
         if (o == null) {

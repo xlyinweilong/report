@@ -41,7 +41,7 @@ public class FactChannelBill {
     /**
      * 单据数量
      */
-    private BigDecimal billQuantityFact = BigDecimal.ZERO;
+    private Integer billQuantityFact = 0;
 
     /**
      * 单据编号

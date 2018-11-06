@@ -35,6 +35,8 @@ public class ExecutionTaskService {
     @Autowired
     private CheckService checkService;
     @Autowired
+    private ChannelBillService channelBillService;
+    @Autowired
     private ClerkService clerkService;
     @Autowired
     private ColorService colorService;
@@ -42,6 +44,8 @@ public class ExecutionTaskService {
     private SizeService sizeService;
     @Autowired
     private VipService vipService;
+    @Autowired
+    private ChannelStockService channelStockService;
 
     private static final Logger log = LoggerFactory.getLogger(ExecutionTaskService.class);
 
@@ -56,8 +60,14 @@ public class ExecutionTaskService {
         taskLog.setTaskId(task.getId());
         taskLog.setTaskStartTime(now);
         try {
+            //--事实收集
             //销售
             checkService.etlCheck(task.getTaskErpDb(), task.getTaskDwDb(), task.getTaskLastSuccessDate());
+            //单据
+            channelBillService.etlChannelBill(task.getTaskErpDb(), task.getTaskDwDb(), task.getTaskLastSuccessDate());
+            //渠道库存
+            channelStockService.etlChannelStock(task.getTaskErpDb(), task.getTaskDwDb());
+            //--维度更新
             //更关货品
             goodsService.etlGoods(task.getTaskErpDb(), task.getTaskDwDb());
             //更新

@@ -52,6 +52,10 @@ public class FactSaleDao {
         dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_sale(goods_sk,color_sk,size_sk,channel_sk,date_sk,clerk_sk,vip_sk,sale_quantity_fact,cost_amount_fact,sale_tag_price_fact,sale_price_fact,bill_code_fact,bill_date_fact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", batch);
     }
 
+    private void truncateTable() {
+        dynamicJdbcTemplate.execute("TRUNCATE  fact_sale");
+    }
+
 
     /**
      * 写入一个纯文本文件
@@ -60,6 +64,7 @@ public class FactSaleDao {
      * @throws IOException
      */
     public void write2Txt(List<FactSale> factSaleList) throws IOException {
+        this.truncateTable();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<String> list = new ArrayList<>();
         String separate = "\t";
@@ -90,7 +95,7 @@ public class FactSaleDao {
         //加载文件
         dynamicJdbcTemplate.execute("LOAD DATA INFILE '" + fileUrl.replaceAll("\\\\", "/") +
                 "' INTO TABLE fact_sale" +
-                " (goods_sk, color_sk, size_sk, channel_sk, date_sk,clerk_sk,vip_sk,sale_quantity_fact,cost_amount_fact,sale_tag_price_fact,sale_price_fact,bill_code,bill_date);");
+                " (goods_sk, color_sk, size_sk, channel_sk, date_sk,clerk_sk,vip_sk,sale_quantity_fact,cost_amount_fact,sale_tag_price_fact,sale_price_fact,bill_code_fact,bill_date_fact);");
         //删除文件
         FileUtils.deleteQuietly(file);
     }

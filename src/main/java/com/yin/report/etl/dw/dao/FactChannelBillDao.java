@@ -21,7 +21,7 @@ import java.util.List;
  * @date 2018.11.02
  */
 @Component
-public class FactChannelDao {
+public class FactChannelBillDao {
 
     @Autowired
     @Qualifier("dynamicJdbcTemplate")
@@ -43,13 +43,17 @@ public class FactChannelDao {
         factChannelBillList.forEach(factChannelBill -> {
             Object[] values = new Object[]{
                     factChannelBill.getGoodsSk(), factChannelBill.getColorSk(), factChannelBill.getSizeSk(),
-                    factChannelBill.getChannelSk(),factChannelBill.getDateSk(),factChannelBill.getBillCodeFact(),
-                    factChannelBill.getBillTypeFact(),factChannelBill.getBillQuantityFact(),factChannelBill.getPriceFact(),
+                    factChannelBill.getChannelSk(), factChannelBill.getDateSk(), factChannelBill.getBillCodeFact(),
+                    factChannelBill.getBillTypeFact(), factChannelBill.getBillQuantityFact(), factChannelBill.getPriceFact(),
                     factChannelBill.getBillDateFact()
             };
             batch.add(values);
         });
         dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_channel_bill(goods_sk,color_sk,size_sk,channel_sk,date_sk,bill_code_fact,bill_type_fact,bill_quantity_fact,tag_price_fact,bill_date_fact) VALUES(?,?,?,?,?,?,?,?,?,?", batch);
+    }
+
+    private void truncateTable() {
+        dynamicJdbcTemplate.execute("TRUNCATE  fact_channel_bill");
     }
 
 
@@ -60,6 +64,7 @@ public class FactChannelDao {
      * @throws IOException
      */
     public void write2Txt(List<FactChannelBill> factChannelBillList) throws IOException {
+        this.truncateTable();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<String> list = new ArrayList<>();
         String separate = "\t";

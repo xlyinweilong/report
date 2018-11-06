@@ -75,6 +75,6 @@ public class DimVipDao implements DaoInterface {
             };
             batch.add(values);
         });
-        dynamicJdbcTemplate.batchUpdate("UPDATE dim_color SET vip_code = ? ,vip_name = ?,vip_grade=?,vip_start_date=?,vip_tel=?,vip_discount=?,vip_sex=? WHERE vip_sk =  ?", batch);
+        dynamicJdbcTemplate.batchUpdate("UPDATE dim_vip SET vip_code = ? ,vip_name = ?,vip_grade=?,vip_start_date=?,vip_tel=?,vip_discount=?,vip_sex=? WHERE vip_sk =  ?", batch);
     }
 }

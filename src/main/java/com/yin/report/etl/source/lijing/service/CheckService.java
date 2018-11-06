@@ -1,13 +1,13 @@
 package com.yin.report.etl.source.lijing.service;
 
 import com.yin.report.common.datasource.config.DBIdentifier;
-import com.yin.report.etl.dw.common.Constant;
-import com.yin.report.etl.dw.common.DaoInterface;
+import com.yin.report.etl.common.ObjectUtils;
+import com.yin.report.etl.dw.common.SqlCommon;
 import com.yin.report.etl.dw.dao.*;
 import com.yin.report.etl.dw.entity.DimDate;
 import com.yin.report.etl.dw.entity.FactSale;
 import com.yin.report.etl.dw.service.*;
-import com.yin.report.etl.common.ObjectUtils;
+import com.yin.report.etl.source.lijing.common.LijinServiceCommon;
 import com.yin.report.etl.source.lijing.dao.CheckDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,29 +58,13 @@ public class CheckService {
     private FactSaleDao factSaleDao;
 
     /**
-     * 生成尺码SQL
-     *
-     * @param count
-     * @return
-     */
-    public String createSizeSql(int count) {
-        StringBuffer sb = new StringBuffer();
-        String code = "S";
-        for (int i = 1; i < count; i++) {
-            sb.append(code).append(i).append(",");
-        }
-        sb.append(code).append(count);
-        return sb.toString();
-    }
-
-    /**
      * 抽取销售并保存维度和事实
      */
-    public void etlCheck(String erpKey, String dwKey, Date lastSuccessDate) throws IOException, Exception {
+    public void etlCheck(String erpKey, String dwKey, Date lastSuccessDate) throws Exception {
         DBIdentifier.setProjectCode(erpKey);
         int maxSizeCount = checkDao.findMaxSizeCount();
-        String sizeSql = this.createSizeSql(maxSizeCount);
-        Integer totalCount = checkDao.findSaleCount();
+        String sizeSql = SqlCommon.createSizeSql(maxSizeCount);
+        Integer totalCount = checkDao.findSaleCount(lastSuccessDate);
         Integer maxRs = 150000;
 
         //查询全部 渠道 员工 颜色 货号 会员 尺码
@@ -107,7 +91,7 @@ public class CheckService {
             List<Map<String, Object>> subList = checkDao.findSaleList(sizeSql, i * maxRs + 1, maxRs, lastSuccessDate);
             DBIdentifier.setProjectCode(dwKey);
             for (Map<String, Object> sub : subList) {
-                if (billList.contains(sub.get("bill_code"))) {
+                if (billList.contains(ObjectUtils.getString(sub.get("bill_code")))) {
                     continue;
                 }
                 //如果数据有空的就跳过不计算
@@ -126,7 +110,7 @@ public class CheckService {
                     FactSale fs = new FactSale();
                     //维度
                     //时间
-                    fs.setBillDate((Date) sub.get("bill_date"));
+                    fs.setBillDate(ObjectUtils.getDateNoHMS((Date) sub.get("bill_date")));
                     if (dimDateMap.containsKey(fs.getBillDate().getTime())) {
                         fs.setDateSk(dimDateMap.get(fs.getBillDate().getTime()));
                     } else {
@@ -145,17 +129,17 @@ public class CheckService {
                         fs.setDateSk(dimDateMap.get(fs.getBillDate().getTime()));
                     }
                     //渠道
-                    fs.setChannelSk(this.getSk(ObjectUtils.getString(sub.get("channel_code")), dimChannelMap, dimChannelDao));
+                    fs.setChannelSk(LijinServiceCommon.getSk(ObjectUtils.getString(sub.get("channel_code")), dimChannelMap, dimChannelDao));
                     //员工
-                    fs.setClerkSk(this.getSk(ObjectUtils.getString(sub.get("clerk_code")), dimClerkMap, dimCherkDao));
+                    fs.setClerkSk(LijinServiceCommon.getSk(ObjectUtils.getString(sub.get("clerk_code")), dimClerkMap, dimCherkDao));
                     //颜色
-                    fs.setColorSk(this.getSk(ObjectUtils.getString(sub.get("goods_color_code")), dimColorMap, dimColorDao));
+                    fs.setColorSk(LijinServiceCommon.getSk(ObjectUtils.getString(sub.get("goods_color_code")), dimColorMap, dimColorDao));
                     //货号
-                    fs.setGoodsSk(this.getSk(ObjectUtils.getString(sub.get("goods_code")), dimGoodsMap, dimGoodsDao));
+                    fs.setGoodsSk(LijinServiceCommon.getSk(ObjectUtils.getString(sub.get("goods_code")), dimGoodsMap, dimGoodsDao));
                     //会员
-                    fs.setVipSk(this.getSk(ObjectUtils.getString(sub.get("vip_code")), dimVipMap, dimVipDao));
+                    fs.setVipSk(LijinServiceCommon.getSk(ObjectUtils.getString(sub.get("vip_code")), dimVipMap, dimVipDao));
                     //尺码
-                    fs.setSizeSk(this.getSk(sizeCode, ObjectUtils.getString(sub.get("size_class")), dimSizeMap, dimSizeDao));
+                    fs.setSizeSk(LijinServiceCommon.getSk(sizeCode, ObjectUtils.getString(sub.get("size_class")), dimSizeMap, dimSizeDao));
                     //事实数据 销售数量 成本金额 销售吊盘价 销售单价
 //                    fs.setCostAmountFact(this.getBigDecimal(sub.get("vip_code")));
                     fs.setSalePriceFact(ObjectUtils.getBigDecimal(sub.get("sale_price")));
@@ -178,31 +162,6 @@ public class CheckService {
         }
     }
 
-    private Long getSk(String key, Map<String, Long> codeLongMap, DaoInterface daoInterface) {
-        return this.getSk(key, null, codeLongMap, daoInterface);
-    }
 
-    private Long getSk(String key, String subKey, Map<String, Long> codeLongMap, DaoInterface daoInterface) {
-        if (StringUtils.isBlank(key)) {
-            return null;
-        }
-        if (subKey != null && codeLongMap.containsKey(key + Constant.SEPARATE + subKey)) {
-            return codeLongMap.get(key + Constant.SEPARATE + subKey);
-        } else if (codeLongMap.containsKey(key)) {
-            return codeLongMap.get(key);
-        } else {
-            //插入数据
-            String[] keys = new String[2];
-            keys[0] = key;
-            keys[1] = subKey;
-            Long id = daoInterface.insert(keys);
-            if (subKey != null) {
-                codeLongMap.put(key + Constant.SEPARATE + subKey, id);
-            } else {
-                codeLongMap.put(key, id);
-            }
-            return id;
-        }
-    }
 
 }

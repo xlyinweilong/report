@@ -37,14 +37,20 @@ public class CheckDao {
      *
      * @return
      */
-    public Integer findSaleCount() {
-        return dynamicJdbcTemplate.queryForObject("select count(*)" +
+    public Integer findSaleCount(Date lastSuccessDate) {
+        String sql = "select count(*)" +
                 " from CheckDetail as d\n" +
                 "left join CheckGoods g on g.CheckGoodsID = d.CheckGoodsID\n" +
                 "left join [check] c on c.checkid = g.checkid\n" +
                 "left join goods on goods.Goods_No = g.Goods_No\n" +
                 "left join Customer on Customer.Customer_id = c.Customer_ID\n" +
-                "where c.Posted = 1", Integer.class);
+                "where c.Posted = 1" + (lastSuccessDate == null ? "" : "and (c.Input_Date > ? or c.Modi_Date > ? or c.PostedDate > ?)");
+        if (lastSuccessDate == null) {
+            return dynamicJdbcTemplate.queryForObject(sql, Integer.class);
+        } else {
+            return dynamicJdbcTemplate.queryForObject(sql, new Object[]{lastSuccessDate, lastSuccessDate, lastSuccessDate}, Integer.class);
+        }
+
     }
 
     /**
