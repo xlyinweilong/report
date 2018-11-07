@@ -52,7 +52,7 @@ public class FactChannelBillDao {
         dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_channel_bill(goods_sk,color_sk,size_sk,channel_sk,date_sk,bill_code_fact,bill_type_fact,bill_quantity_fact,tag_price_fact,bill_date_fact) VALUES(?,?,?,?,?,?,?,?,?,?", batch);
     }
 
-    private void truncateTable() {
+    public void truncateTable() {
         dynamicJdbcTemplate.execute("TRUNCATE  fact_channel_bill");
     }
 
@@ -64,7 +64,6 @@ public class FactChannelBillDao {
      * @throws IOException
      */
     public void write2Txt(List<FactChannelBill> factChannelBillList) throws IOException {
-        this.truncateTable();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<String> list = new ArrayList<>();
         String separate = "\t";

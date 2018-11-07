@@ -1,7 +1,7 @@
 package com.yin.report.etl.source.lijing.dao;
 
 import com.yin.report.etl.common.ObjectUtils;
-import com.yin.report.etl.dw.entity.DimColor;
+import com.yin.report.etl.dw.entity.DimWarehouse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,29 +10,29 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 颜色DAO
+ * 仓库DAO
  *
  * @author yin.weilong
  * @date 2018.11.02
  */
 @Component
-public class ColorDao {
+public class WarehouseDao {
 
     @Autowired
     @Qualifier("dynamicJdbcTemplate")
     private JdbcTemplate dynamicJdbcTemplate;
 
     /**
-     * 从丽晶查询全部的颜色
+     * 从丽晶查询全部的渠道
      *
      * @return
      */
-    public List<DimColor> findAll() {
-        String sql = "select ColorID as color_code,Color as color_name from DictColor";
+    public List<DimWarehouse> findAll() {
+        String sql = "select warehouse_no as warehouse_code,warehouse_na as warehouse_name  from warehouse";
         return dynamicJdbcTemplate.query(sql, (resultSet, i) -> {
-            DimColor dim = new DimColor();
-            dim.setColorCode(ObjectUtils.getString(resultSet.getString("color_code")));
-            dim.setColorName(ObjectUtils.getString(resultSet.getString("color_name")));
+            DimWarehouse dim = new DimWarehouse();
+            dim.setWarehouseCode(ObjectUtils.getString(resultSet.getString("warehouse_code")));
+            dim.setWarehouseName(ObjectUtils.getString(resultSet.getString("warehouse_name")));
             return dim;
         });
     }

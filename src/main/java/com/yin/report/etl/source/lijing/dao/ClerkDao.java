@@ -30,7 +30,7 @@ public class ClerkDao {
         String sql = "select BuisnessManID as clerk_code,Name as clerk_name,BirthDate as clerk_birth_date,Sex as clerk_sex,CustomerID as channel_code from BuisnessMan";
         return dynamicJdbcTemplate.query(sql, (resultSet, i) -> {
             DimClerk dim = new DimClerk();
-            dim.setChannelCode(ObjectUtils.getString(resultSet.getString("channel_code")));
+            dim.setClerkCode(ObjectUtils.getString(resultSet.getString("clerk_code")));
             dim.setClerkName(ObjectUtils.getString(resultSet.getString("clerk_name")));
             dim.setClerkBirthDate(ObjectUtils.getString(resultSet.getString("clerk_birth_date")));
             dim.setClerkSex(ObjectUtils.getString(resultSet.getString("clerk_sex")));

@@ -1,5 +1,10 @@
 package com.yin.report.system.task;
 
+import com.yin.report.common.datasource.config.DBIdentifier;
+import com.yin.report.etl.dw.dao.FactChannelBillDao;
+import com.yin.report.etl.dw.dao.FactChannelStockDao;
+import com.yin.report.etl.dw.dao.FactSaleDao;
+import com.yin.report.etl.dw.dao.FactWarehouseStockDao;
 import com.yin.report.etl.source.lijing.service.*;
 import com.yin.report.system.task.dao.TaskDao;
 import com.yin.report.system.task.dao.TaskLogDao;
@@ -46,6 +51,18 @@ public class ExecutionTaskService {
     private VipService vipService;
     @Autowired
     private ChannelStockService channelStockService;
+    @Autowired
+    private WarehouseService warehouseService;
+    @Autowired
+    private WarehouseStockService warehouseStockService;
+    @Autowired
+    private FactChannelBillDao factChannelBillDao;
+    @Autowired
+    private FactChannelStockDao factChannelStockDao;
+    @Autowired
+    private FactWarehouseStockDao factWarehouseStockDao;
+    @Autowired
+    private FactSaleDao factSaleDao;
 
     private static final Logger log = LoggerFactory.getLogger(ExecutionTaskService.class);
 
@@ -60,6 +77,14 @@ public class ExecutionTaskService {
         taskLog.setTaskId(task.getId());
         taskLog.setTaskStartTime(now);
         try {
+            if(task.getTaskLastSuccessDate() == null){
+                DBIdentifier.setProjectCode(task.getTaskDwDb());
+                factChannelBillDao.truncateTable();
+                factChannelStockDao.truncateTable();
+                factWarehouseStockDao.truncateTable();
+                factSaleDao.truncateTable();
+            }
+
             //--事实收集
             //销售
             checkService.etlCheck(task.getTaskErpDb(), task.getTaskDwDb(), task.getTaskLastSuccessDate());
@@ -67,6 +92,8 @@ public class ExecutionTaskService {
             channelBillService.etlChannelBill(task.getTaskErpDb(), task.getTaskDwDb(), task.getTaskLastSuccessDate());
             //渠道库存
             channelStockService.etlChannelStock(task.getTaskErpDb(), task.getTaskDwDb());
+            //仓库库存
+            warehouseStockService.etlWarehouseStock(task.getTaskErpDb(), task.getTaskDwDb());
             //--维度更新
             //更关货品
             goodsService.etlGoods(task.getTaskErpDb(), task.getTaskDwDb());
@@ -80,7 +107,8 @@ public class ExecutionTaskService {
             sizeService.etlSize(task.getTaskErpDb(), task.getTaskDwDb());
             //更新VIP
             vipService.etlVip(task.getTaskErpDb(), task.getTaskDwDb());
-
+            //更新仓库
+            warehouseService.etlWarehouse(task.getTaskErpDb(), task.getTaskDwDb());
             //执行完成后更新
             task.setTaskFinishDate(LocalDate.now());
             task.setTaskLastSuccessDate(now);

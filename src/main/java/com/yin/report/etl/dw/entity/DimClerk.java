@@ -1,5 +1,6 @@
 package com.yin.report.etl.dw.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"clerkCode"})
 public class DimClerk {
 
     private Long clerkSk;

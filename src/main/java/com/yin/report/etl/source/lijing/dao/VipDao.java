@@ -35,10 +35,8 @@ public class VipDao {
                 "v.Sex as vip_sex,\n" +
                 "v.Tel as vip_tel,\n" +
                 "v.Discount as vip_discount,\n" +
-                "v.VipGrade as vip_grade,\n" +
-                "g.VipGradeNAME as vip_grade_name\n" +
-                "from CustomerVIP v\n" +
-                "LEFT JOIN VIPGrade g ON g.VipGrade = v.VIPGrade\n";
+                "v.VipGrade as vip_grade\n" +
+                "from CustomerVIP v\n";
         return dynamicJdbcTemplate.query(sql, (resultSet, i) -> {
             DimVip dim = new DimVip();
             dim.setVipCode(ObjectUtils.getString(resultSet.getString("vip_code")));

@@ -65,7 +65,7 @@ public class CheckService {
         int maxSizeCount = checkDao.findMaxSizeCount();
         String sizeSql = SqlCommon.createSizeSql(maxSizeCount);
         Integer totalCount = checkDao.findSaleCount(lastSuccessDate);
-        Integer maxRs = 150000;
+        Integer maxRs = 100000;
 
         //查询全部 渠道 员工 颜色 货号 会员 尺码
         DBIdentifier.setProjectCode(dwKey);
