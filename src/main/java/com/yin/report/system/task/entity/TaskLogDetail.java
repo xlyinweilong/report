@@ -33,4 +33,35 @@ public class TaskLogDetail {
      */
     private String logDetail;
 
+    /**
+     * 开始时间
+     */
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    private Date endTime;
+
+    /**
+     * 当前状态
+     */
+    private String logStatus;
+
+
+    /**
+     * 本次收录数量
+     */
+    private Integer logCount;
+
+    /**
+     * 仓库内总数
+     */
+    private Integer dwCount;
+
+    /**
+     * erp内数量
+     */
+    private Integer erpCount;
+
 }

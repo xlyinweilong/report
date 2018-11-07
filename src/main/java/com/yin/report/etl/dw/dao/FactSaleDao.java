@@ -27,7 +27,6 @@ public class FactSaleDao {
     @Qualifier("dynamicJdbcTemplate")
     private JdbcTemplate dynamicJdbcTemplate;
 
-
     public List<String> findAllBillCode() {
         return dynamicJdbcTemplate.queryForList("SELECT DISTINCT(bill_code_fact) FROM fact_sale ORDER BY sale_sk DESC limit 10000", String.class);
     }

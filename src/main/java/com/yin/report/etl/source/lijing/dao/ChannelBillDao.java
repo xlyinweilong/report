@@ -53,7 +53,7 @@ public class ChannelBillDao {
         if (lastSuccessDate == null) {
             return dynamicJdbcTemplate.queryForObject(sql, Integer.class);
         } else {
-            return dynamicJdbcTemplate.queryForObject(sql, new Object[]{lastSuccessDate, lastSuccessDate, lastSuccessDate}, Integer.class);
+            return dynamicJdbcTemplate.queryForObject(sql, new Object[]{lastSuccessDate, lastSuccessDate, lastSuccessDate,lastSuccessDate, lastSuccessDate, lastSuccessDate,lastSuccessDate, lastSuccessDate, lastSuccessDate}, Integer.class);
         }
 
     }
@@ -125,7 +125,7 @@ public class ChannelBillDao {
         if (lastSuccessDate == null) {
             return dynamicJdbcTemplate.queryForList(sql, new Object[]{firstIndex, firstIndex + pageSize - 1});
         } else {
-            return dynamicJdbcTemplate.queryForList(sql, new Object[]{lastSuccessDate, lastSuccessDate, lastSuccessDate, firstIndex, firstIndex + pageSize - 1});
+            return dynamicJdbcTemplate.queryForList(sql, new Object[]{lastSuccessDate, lastSuccessDate, lastSuccessDate,lastSuccessDate, lastSuccessDate, lastSuccessDate,lastSuccessDate, lastSuccessDate, lastSuccessDate, firstIndex, firstIndex + pageSize - 1});
         }
     }
 }

@@ -27,7 +27,6 @@ public class FactChannelStockDao {
     private JdbcTemplate dynamicJdbcTemplate;
 
 
-
     public void truncateTable() {
         dynamicJdbcTemplate.execute("TRUNCATE  fact_channel_stock");
     }

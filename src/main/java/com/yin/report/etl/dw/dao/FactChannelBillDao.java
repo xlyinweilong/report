@@ -49,7 +49,7 @@ public class FactChannelBillDao {
             };
             batch.add(values);
         });
-        dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_channel_bill(goods_sk,color_sk,size_sk,channel_sk,date_sk,bill_code_fact,bill_type_fact,bill_quantity_fact,tag_price_fact,bill_date_fact) VALUES(?,?,?,?,?,?,?,?,?,?", batch);
+        dynamicJdbcTemplate.batchUpdate("INSERT INTO fact_channel_bill(goods_sk,color_sk,size_sk,channel_sk,date_sk,bill_code_fact,bill_type_fact,bill_quantity_fact,tag_price_fact,bill_date_fact) VALUES(?,?,?,?,?,?,?,?,?,?)", batch);
     }
 
     public void truncateTable() {

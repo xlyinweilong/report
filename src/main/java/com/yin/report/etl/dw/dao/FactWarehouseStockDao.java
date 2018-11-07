@@ -26,8 +26,6 @@ public class FactWarehouseStockDao {
     @Qualifier("dynamicJdbcTemplate")
     private JdbcTemplate dynamicJdbcTemplate;
 
-
-
     public void truncateTable() {
         dynamicJdbcTemplate.execute("TRUNCATE  fact_warehouse_stock");
     }
